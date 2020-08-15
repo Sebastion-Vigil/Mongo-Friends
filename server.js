@@ -1,3 +1,6 @@
+// https://www.tutorialspoint.com/mongodb/ -> online resource to learn mongoDB
+// https://mongoosejs.com/docs/ -> online resource to learn Mongoose ODM -> dafuq ODM stand for?
+
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
