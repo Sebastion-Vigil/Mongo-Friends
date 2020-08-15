@@ -31,6 +31,6 @@ const options = {
 const friendSchema = new mongoose.Schema(friendDefinition, options)
 
 // finally, pass the schema to mongoose here to make friendModel
-const friendModel = mongoose.model('Friend', friendSchema, 'friends')
+const friendModel = mongoose.model('Friend', friendSchema, 'friends') // (Model, Schema, also name of db?)
 
 module.exports = friendModel
