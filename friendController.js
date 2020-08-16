@@ -10,13 +10,13 @@ router
         res.status(200).json(friends)
       })
       .catch(err => {
-        console.log(err)
         res
           .status(500)
           .json({ errorMessage: 'Unable to retrieve friends data.' })
       })
   })
   .post((req, res) => {
+    // error handling working in post method
     const friendData = req.body
     const friend = new Friend(friendData)
 
@@ -61,16 +61,20 @@ router
     const friendID = req.params.id
     Friend.findById(friendID)
       .then(friend => {
-        if (friend !== null) {
-          res.status(200).json(friend)
-        } else {
-          res.status(404).json({ errorMessage: 'No friend with that id exists.'})
+        if (friend === null) {
+          console.log("this printed out when friend was null")
         }
+        res.status(200).json(friend)
       })
       .catch(err => {
-        res
-          .status(404)
-          .json({ errorMessage: 'Unable to retrieve friend data.' })
+        console.log(err.name)
+        if (err.name === 'CastError') {
+          res.status(404).json({ errorMessage: 'No friend with that id in db' })
+        } else {
+          res
+            .status(500)
+            .json({ errorMessage: 'Unable to retrieve friend data.' })
+        }
       })
   })
   .put((req, res) => {
@@ -85,7 +89,6 @@ router
         }
       })
       .catch(err => {
-        console.log(err)
         res.status(500).json({ errorMessage: 'Unable to update friend data.' })
       })
   })
@@ -102,7 +105,6 @@ router
         }
       })
       .catch(err => {
-        console.log(err)
         res
           .status(500)
           .json({ errorMessage: 'Unable to retrieve friend data.' })
