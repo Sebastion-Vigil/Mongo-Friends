@@ -63,6 +63,7 @@ router
         if (friend === null) {
           res.status(404).json({ errorMessage: 'No friend exists with that id.'})
         } else {
+          console.log(Object.entries(friend.contactInfo))
           res.status(200).json(friend)
         }
       })

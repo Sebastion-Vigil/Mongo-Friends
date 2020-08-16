@@ -17,6 +17,17 @@ const friendDefinition = {
       max: 120,
       required: true
   },
+  contactInfo: {
+    email: {
+      type: String
+    },
+    phone: {
+      type: String
+    },
+    twitter: {
+      type: String
+    }
+  },
   createdOn: {
       type: Date,
       default: Date.now
