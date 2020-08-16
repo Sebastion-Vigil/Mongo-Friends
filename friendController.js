@@ -16,7 +16,6 @@ router
       })
   })
   .post((req, res) => {
-    // error handling working in post method
     const friendData = req.body
     const friend = new Friend(friendData)
 
@@ -28,7 +27,7 @@ router
           friend.lastName !== undefined &&
           friend.age !== undefined
         ) {
-          res.status(201).json(friend) // brush up on meaning of different server statuses
+          res.status(201).json(friend)
         }
       })
       .catch(err => {
@@ -62,14 +61,14 @@ router
     Friend.findById(friendID)
       .then(friend => {
         if (friend === null) {
-          console.log("this printed out when friend was null")
+          res.status(404).json({ errorMessage: 'No friend exists with that id.'})
+        } else {
+          res.status(200).json(friend)
         }
-        res.status(200).json(friend)
       })
       .catch(err => {
-        console.log(err.name)
         if (err.name === 'CastError') {
-          res.status(404).json({ errorMessage: 'No friend with that id in db' })
+          res.status(400).json({ errorMessage: 'Invalid id' })
         } else {
           res
             .status(500)
@@ -80,34 +79,42 @@ router
   .put((req, res) => {
     const friendID = req.params.id
     const update = req.body
-    Friend.findByIdAndUpdate(friendID, update)
+    const options = {new: true}
+    Friend.findByIdAndUpdate(friendID, update, options)
       .then(friend => {
-        if (friend !== null) {
-          res.status(200).json(friend)
+        if (req.body.age && req.body.age < 1 || req.body.age > 120) {
+          res.status(400).json({ errorMessage: 'Age must be a number between 1 and 120'})
+        }
+        if (friend === null) {
+          res.status(404).json({ message: 'No friend exists with that id.' })
         } else {
-          res.status(400).json({ message: 'No friend exists with that id.' })
+          res.status(200).json(friend)
         }
       })
       .catch(err => {
-        res.status(500).json({ errorMessage: 'Unable to update friend data.' })
+        if (err.name === 'CastError') {
+          res.status(400).json({ errorMessage: 'Invalid id'})
+        } else {
+          res.status(500).json({ errorMessage: 'Unable to update friend data.' })
+        }
       })
   })
   .delete((req, res) => {
     const friendID = req.params.id
     Friend.findByIdAndDelete(friendID)
       .then(friend => {
-        if (friend !== null) {
-          res.status(200).json({ friend })
+        if (friend === null) {
+          res.status(404).json({ errorMessage: 'No friend exists with that id'})
         } else {
-          res
-            .status(404)
-            .json({ errorMessage: 'No friend exists with that id.' })
+          res.status(200).json(friend)
         }
       })
       .catch(err => {
-        res
-          .status(500)
-          .json({ errorMessage: 'Unable to retrieve friend data.' })
+        if (err.name === 'CastError') {
+          res.status(400).json({ errorMessage: 'Invalid id' })
+        } else {
+          res.status(500).json({ errorMessage: 'The friend could not be removed.'})
+        }
       })
   })
 module.exports = router
